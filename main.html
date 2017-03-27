@@ -1,0 +1,52 @@
+<div class="shifty">
+  <ul>
+    <li id='1'>11</li>
+    <li id='2'>22</li>
+    <li id='3'>33</li>
+  </ul>
+</div>
+
+<div class="status"></div>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+
+var keysPressed = [],
+    shift_on = false,
+    current = -1,
+    shiftCode = 16;
+
+$(document).on("keyup keydown", function(e) {
+    // console.log('e_', e);
+    // console.log('target', e.target);
+    switch(e.type) {
+        case "keydown" :
+            console.log('k_down');
+            keysPressed.push(e.keyCode);
+            break;
+        case "keyup" :
+            console.log('k_up');
+            var idx = keysPressed.indexOf(e.keyCode);
+            if (idx >= 0)
+                keysPressed.splice(idx, 1);
+            break;
+    }
+});
+
+$("div.shifty").on("click", function(e) {
+    e.preventDefault();
+    status = "Shift Pressed: " + (isKeyPressed(shiftCode) ? "true" : "false");
+    shift_on = isKeyPressed(shiftCode) ? true : false;
+    console.log('shift_on', shift_on);
+e.target.style.color = 'red';
+    if(shift_on === true)
+      console.log('end', e.target);
+    else
+      console.log('start', e.target);
+
+    $(".status").html(status);
+});
+
+function isKeyPressed(code) {
+    return keysPressed.indexOf(code) >= 0;
+}
+</script>
