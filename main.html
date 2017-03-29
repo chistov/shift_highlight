@@ -1,18 +1,23 @@
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <div class="shifty">
   <ul>
-    <li id='1'>11</li>
-    <li id='2'>22</li>
-    <li id='3'>33</li>
+    <li id='1'>1</li>
+    <li id='2'>2</li>
+    <li id='3'>3</li>
+    <li id='4'>4</li>
+    <li id='5'>5</li>
+    <li id='6'>6</li>
+    <li id='7'>7</li>
   </ul>
 </div>
 
-<div class="status"></div>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
 
 var keysPressed = [],
-    shift_on = false,
-    current = -1,
+    elements2rm = [],
+    lastClicked = -1,
+    currClicked = -1,
+    ctrlCode = 17;
     shiftCode = 16;
 
 $(document).on("keyup keydown", function(e) {
@@ -33,17 +38,44 @@ $(document).on("keyup keydown", function(e) {
 });
 
 $("div.shifty").on("click", function(e) {
-    e.preventDefault();
-    status = "Shift Pressed: " + (isKeyPressed(shiftCode) ? "true" : "false");
-    shift_on = isKeyPressed(shiftCode) ? true : false;
-    console.log('shift_on', shift_on);
-e.target.style.color = 'red';
-    if(shift_on === true)
-      console.log('end', e.target);
-    else
-      console.log('start', e.target);
+    function addHighlight(elem){ $(elem).css({'color': 'red'}); }
+    function rmHighlight(elem){ $(elem).css({'color': 'black'}); }
 
-    $(".status").html(status);
+    e.preventDefault();
+    console.log('__e', e);
+    if(isKeyPressed(shiftCode)){
+      console.log('e__', e);
+      elements2rm.forEach(rmHighlight);
+      elements2rm = [];
+
+      currClicked = e.target;
+      var end = parseInt(currClicked.id, 10);
+      var start = curr = parseInt(lastClicked.id, 10);
+      if(start < end)
+        for(; curr <= end ; ++curr)
+          elements2rm.push($('li[id="' + curr +'"]'));
+      else
+        for(; curr >= end ; --curr)
+          elements2rm.push($('li[id="' + curr +'"]'));
+
+      elements2rm.forEach(addHighlight);
+      
+    }
+    else if(isKeyPressed(ctrlCode)){
+      lastClicked = currClicked = e.target;
+      elements2rm.push(lastClicked);
+      addHighlight(lastClicked);
+    }
+    else{
+      elements2rm.forEach(rmHighlight);
+      elements2rm = [];
+
+      lastClicked = currClicked = e.target;
+
+      addHighlight(lastClicked);
+      elements2rm.push(lastClicked);
+      console.log('elements2rm', elements2rm);
+    }
 });
 
 function isKeyPressed(code) {
